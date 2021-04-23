@@ -21,6 +21,8 @@ namespace Client
         public TCP tcp;
         public UDP udp;
 
+        private bool isConnected = false;
+
 
         private delegate void PacketHandler(Packet _packet);
         private static Dictionary<int, PacketHandler> packetHandlers;
@@ -57,6 +59,8 @@ namespace Client
             InitializeClientData();
             tcp.Connect();
             udp.Connect(port);
+
+            isConnected = true;
         }
 
         //TCP Protocol
@@ -120,7 +124,8 @@ namespace Client
 
                     if (byteLenght <= 0)
                     {
-                        //TODO disconnect
+                        //disconnect
+                        instance.Disconnect();
                         return;
                     }
 
@@ -133,8 +138,7 @@ namespace Client
                 }
                 catch (Exception _err)
                 {
-
-                    Console.WriteLine(_err);
+                    Disconnect();
                 }
             }
 
@@ -157,16 +161,24 @@ namespace Client
                 {
                     byte[] packetBytes = receivedData.ReadBytes(packetLenght);
 
-                    ThreadManager.ExecuteOnMainThread(() =>
-                    {
-                        using (Packet _packet = new Packet(packetBytes))
-                        {
-                            int packetId = _packet.ReadInt();
+                    //ThreadManager.ExecuteOnMainThread(() =>
+                    //{
+                    //    using (Packet _packet = new Packet(packetBytes))
+                    //    {
+                    //        int packetId = _packet.ReadInt();
 
-                            //execute a method on dictionary
-                            packetHandlers[packetId](_packet);
-                        }
-                    });
+                    //        //execute a method on dictionary
+                    //        packetHandlers[packetId](_packet);
+                    //    }
+                    //});
+
+                    using (Packet _packet = new Packet(packetBytes))
+                    {
+                        int packetId = _packet.ReadInt();
+
+                        //execute a method on dictionary
+                        packetHandlers[packetId](_packet);
+                    }
 
                     packetLenght = 0;
                     if (receivedData.UnreadLength() >= 4)
@@ -185,6 +197,16 @@ namespace Client
                 }
 
                 return false;
+            }
+
+            private void Disconnect()
+            {
+                instance.Disconnect();
+
+                stream = null;
+                receiveBuffer = null;
+                receivedData = null;
+                socket = null;
             }
 
 
@@ -243,7 +265,8 @@ namespace Client
                     //make sure we have data to handle
                     if (data.Length < 4)
                     {
-                        //TODO disconnect
+                        //disconnect
+                        instance.Disconnect();
                         return;
                     }
 
@@ -251,8 +274,8 @@ namespace Client
                 }
                 catch (Exception err)
                 {
-
-                    //TODO disconnect
+                    // disconnect
+                    Disconnect();
                 }
             }
 
@@ -273,6 +296,14 @@ namespace Client
                     }
                 });
             }
+
+            private void Disconnect()
+            {
+                instance.Disconnect();
+
+                endPoint = null;
+                socket = null;
+            }
         }
 
 
@@ -286,6 +317,18 @@ namespace Client
 
             Console.WriteLine("Initialized packetes.");
 
+        }
+
+        private void Disconnect()
+        {
+            if (isConnected)
+            {
+                isConnected = false;
+                tcp.socket.Close();
+                udp.socket.Close();
+
+                Console.WriteLine("Disconnected from server.");
+            }
         }
     }
 }

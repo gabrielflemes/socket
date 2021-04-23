@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Client
 {
+    ////PACKETS TO BE SENT TO SERVER - HANDLE HERE
     public class ClientSend
     {
         private static void SendTCPData(Packet packet)
@@ -24,8 +25,9 @@ namespace Client
             using (Packet packet = new Packet((int)ClientPackets.welcomeReceived))
             {
                 //IMPORTANT: we are using TCP, so we have make sure to send the packed to client in the same order
+
                 packet.Write(Client.Instance.myId);
-                packet.Write(Client.Instance.myId + ": teste");
+                packet.Write("USER " + Client.Instance.myId);
 
                 SendTCPData(packet);
             }

@@ -22,19 +22,20 @@ namespace Client
             isRunning = true;
 
             //start a new thead
-            Thread mainThread = new Thread(new ThreadStart(MainThread));
-            mainThread.Start();
+            //Thread mainThread = new Thread(new ThreadStart(MainThread));
+            //mainThread.Start();
 
             //Start UDP/FTP client.
             Client.Instance.ConnectToServer();
+            
 
-
-            //message loop
+            //message/app loop
             while (true)
             {
-                string teste = Console.ReadLine();
+                
+                string inputText = Console.ReadLine();
 
-                ClientSend.Message(teste);
+                ClientSend.Message(inputText);
 
             }
         }

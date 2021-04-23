@@ -51,7 +51,7 @@ namespace Server
         private static void InitializeServerData()
         {
             //Initialize all empty clients 
-            for (int i = 1; i < maxConnection; i++)
+            for (int i = 1; i <= maxConnection; i++)
             {
                 clients.Add(i, new Client(i));
             }

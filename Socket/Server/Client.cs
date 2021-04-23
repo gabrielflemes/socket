@@ -12,7 +12,7 @@ namespace Server
 
         //client info
         public int clientId;
-        public string name;
+        public User user;
 
         //
         public TCP tcp;
@@ -87,7 +87,8 @@ namespace Server
 
                     if (byteLenght <= 0)
                     {
-                        //TODO disconnect
+                        //disconnect
+                        Server.clients[clientId].Disconnect();
                         return;
                     }
 
@@ -103,9 +104,10 @@ namespace Server
                 catch (Exception _err)
                 {
 
-                    Console.WriteLine($"Errir receiving TCP Data: {_err}");
+                    //Console.WriteLine($"Errir receiving TCP Data: {_err}");
 
-                    //TODO: disconnect
+                    //disconnect
+                    Server.clients[clientId].Disconnect();
 
                 }
             }
@@ -134,7 +136,7 @@ namespace Server
                         using (Packet _packet = new Packet(packetBytes))
                         {
                             int packetId = _packet.ReadInt();
-                            Server.packetHandlers[packetId](packetId, _packet);
+                            Server.packetHandlers[packetId](clientId, _packet); // Call appropriate method to handle the packet
                         }
                     });
 
@@ -155,6 +157,15 @@ namespace Server
                 }
 
                 return false;
+            }
+
+            public void Disconnect()
+            {
+                socket.Close();
+                stream = null;
+                receivedData = null;
+                receiveBuffer = null;
+                socket = null;
             }
         }
 
@@ -197,8 +208,63 @@ namespace Server
                 });
 
             }
+
+            public void Disconnect()
+            {
+                endPoint = null;
+            }
+
         }
 
-     
+
+        //
+        public void InsertUser(string _userName)
+        {
+            //instanciate new user
+            user = new User(clientId, _userName);
+
+            //send info to all clients (Users) connected
+            foreach (Client _client in Server.clients.Values)
+            {
+                if (_client.user != null)
+                {
+                    if (_client.clientId != clientId)
+                    {
+                        ServerSend.Message(_client.clientId, $"User {user.username} entered the room.");
+                    }
+                }
+            }
+           
+        }
+
+        public void Message(string _msg)
+        {
+            //instanciate new user
+
+            //send info to all clients (Users) connected
+            foreach (Client _client in Server.clients.Values)
+            {
+                if (_client.user != null)
+                {
+                    if (_client.clientId != clientId)
+                    {
+                        ServerSend.Message(_client.clientId, $"User {user.username} {_msg}");
+                    }
+                }
+            }
+
+        }
+
+
+        public void Disconnect()
+        {
+            Console.WriteLine($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+
+            user = null;
+
+            tcp.Disconnect();
+            udp.Disconnect();
+        }
+
     }
 }

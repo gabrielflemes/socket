@@ -72,6 +72,7 @@ namespace Server
 
         #region Packets
 
+        //Welcome is called when de client connect to server.
         public static void Welcome(int _toClient, string _msg)
         {
             using (Packet _packet = new Packet((int)ServerPackets.welcomePacketSent))
@@ -84,7 +85,19 @@ namespace Server
                 //SendTCPDataToAll(_packet);
             }
         }
-     
+
+        //
+        public static void Message(int _toClient, string _msg)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.message))
+            {
+                //IMPORTANT: we are using TCP, so we have make sure to sehnd the packed to client in the same order
+                _packet.Write(_toClient);
+                _packet.Write(_msg);
+
+                SendTCPData(_toClient, _packet);
+            }
+        }
 
         #endregion
     }

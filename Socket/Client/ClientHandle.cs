@@ -5,6 +5,7 @@ using System.Net;
 
 namespace Client
 {
+    //PACKETS FROM SERVER -  - HANDLE HERE
     public class ClientHandle
     {
         public static void Welcome(Packet _packet)
@@ -24,6 +25,8 @@ namespace Client
             Client.Instance.udp.Connect(((IPEndPoint)Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
 
+
+        //
         public static void Message(Packet _packet)
         {
 
@@ -31,8 +34,7 @@ namespace Client
             int id = _packet.ReadInt();
             string message = _packet.ReadString();
 
-            //send welcome received packet
-            ClientSend.Message(message);
+            Console.WriteLine($"{id}:{message}");
 
             Client.Instance.udp.Connect(((IPEndPoint)Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
