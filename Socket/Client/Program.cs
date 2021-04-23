@@ -9,9 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace Server
+namespace Client
 {
-    
     public class Program
     {
 
@@ -19,15 +18,15 @@ namespace Server
 
         static void Main(string[] args)
         {
-            Console.Title = "[POC TCP/UDP] Server";
+            Console.Title = "[POC TCP/UDP] Client";
             isRunning = true;
 
             //start a new thead
             Thread mainThread = new Thread(new ThreadStart(MainThread));
             mainThread.Start();
 
-            //Start UDP/FTP server. Paramters are: maxConnection and port
-            Server.Start(3, 26951);
+            //Start UDP/FTP client.
+            Client.Instance.ConnectToServer();
         }
 
         private static void MainThread()
@@ -55,6 +54,6 @@ namespace Server
             }
         }
 
-      
+
     }
 }
