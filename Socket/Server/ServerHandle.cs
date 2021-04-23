@@ -17,10 +17,23 @@ namespace Server
 
             if (_fromClient != clientIdCheck)
             {
-                Console.WriteLine($"Player {clientUserName} ID: {_fromClient} has assumed the wrong client ID ({clientIdCheck})");
+                Console.WriteLine($"User {clientUserName} ID: {_fromClient} has assumed the wrong client ID ({clientIdCheck})");
             }
 
             //
+
+        }
+
+        public static void Message(int _fromClient, Packet _packet)
+        {
+
+            //IMPORTANT: we are using TCP, so we have make sure to rceive the packed from client in the same order
+            int clientId = _packet.ReadInt();
+            string clientMessage = _packet.ReadString();
+
+            Console.WriteLine($"User {clientId}: {clientMessage}");
+
+           
 
         }
     }

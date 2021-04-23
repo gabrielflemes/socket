@@ -56,10 +56,11 @@ namespace Server
                 clients.Add(i, new Client(i));
             }
 
-            //Initialize PacketHandler dictionary
+            //Initialize PacketHandler dictionary that we reaceive from cliets
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
-                { (int)ClientPackets.welcomePacketReceived, ServerHandle.WelcomeReceived }
+                { (int)ClientPackets.welcomePacketReceived, ServerHandle.WelcomeReceived },
+                { (int)ClientPackets.message, ServerHandle.Message }
             };
 
             Console.WriteLine($"Initialized packet.");

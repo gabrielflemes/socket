@@ -31,6 +31,18 @@ namespace Client
             }
         }
 
+        public static void Message(string msg)
+        {
+            using (Packet packet = new Packet((int)ClientPackets.message))
+            {
+                //IMPORTANT: we are using TCP, so we have make sure to send the packed to client in the same order
+                packet.Write(Client.Instance.myId);
+                packet.Write(msg);
+
+                SendTCPData(packet);
+            }
+        }
+
 
         #endregion
     }

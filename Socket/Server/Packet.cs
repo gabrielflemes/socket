@@ -8,6 +8,7 @@ namespace Server
     public enum ServerPackets
     {
         welcomePacketSent = 1,
+        message
 
     }
 
@@ -15,6 +16,7 @@ namespace Server
     public enum ClientPackets
     {
         welcomePacketReceived = 1,
+        message
     }
 
 

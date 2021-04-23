@@ -27,6 +27,16 @@ namespace Client
 
             //Start UDP/FTP client.
             Client.Instance.ConnectToServer();
+
+
+            //message loop
+            while (true)
+            {
+                string teste = Console.ReadLine();
+
+                ClientSend.Message(teste);
+
+            }
         }
 
         private static void MainThread()
